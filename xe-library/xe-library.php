@@ -272,7 +272,7 @@ function x_sum($what,$table,$where){
 			return $num;
 			}
 	}else{
-		return 0;
+		return "0";
 	}
 	
 
@@ -1005,25 +1005,44 @@ function xstart($pick){
 	}
 	
 
-	#include and require
 	function xreq($val){
-		if(empty($val)){
-			x_print("File name cannot be empty!");
-		exit();
+		    if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File required does not exist!");
 			}else{
 				return require_once($val);
 			}
-	
 		}
 		
-		function xinc($val){
-		if(empty($val)){
-			x_print("File name cannot be empty!");
-		exit();
+	function xinc($val){
+			if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File included does not exist!");
 			}else{
 				return include_once($val);
 			}
-	
+		}
+		
+	function x_req($val){
+		if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File required does not exist!");
+			}else{
+				return require($val);
+			}
+		}
+		
+	function x_inc($val){
+		if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File included does not exist!");
+			}else{
+				return include($val);
+			}
 		}
 		
 		function xtitle($val){
@@ -1035,21 +1054,31 @@ function xstart($pick){
 			}
 			}
 			
-function x_trunc($str,$start,$stop){
-$len = strlen($str);
-if(!is_numeric($start) || !is_numeric($stop)){
-return "Error:inproper usage of x_trunc(str,start,stop)";
-}else{
 
-if($len > $start){
-return substr($str,$start,$stop)."...";
-}elseif($len < $start){
-return substr($str,$start,$stop);
-}else{
-return $start;
+function x_trunc($str,$start,$stop){
+	$len = strlen($str);
+	if(!is_numeric($start) || !is_numeric($stop)){
+		
+	return "Error:inproper usage of x_trunc(str,start,stop)";
+	
+	}else{
+
+	if($len > $stop){
+		
+	  return substr($str,$start,$stop)."...";
+	  
+	}elseif(($len < $stop) || ($len == $stop)){
+		
+	  return substr($str,$start,$stop);
+	  
+	}else{
+		
+	 return $start;
+	 
+	}
+  }
 }
-}
-}
+
 
 function x_vert($str,$wrap){
 	if($wrap == ""){
@@ -1684,6 +1713,20 @@ function x_convert_figure($value){
 	
 }
 
+// Update as at 11/24/2022
+	
+	function x_checkdate($realdate){
+		$date_arr  = explode('/', $realdate);
+		if (count($date_arr) == 3) {
+			if (checkdate($date_arr[0], $date_arr[1], $date_arr[2])) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return "Invalid input";
+		}
+	}
 // Paystack payment functions
 include("payment_functions.php");
 // Include other library

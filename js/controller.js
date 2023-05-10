@@ -1,15 +1,28 @@
-$(document).ready(function(){
-	function dialogbox(clickagentid,divclassname,closebossid){
-		$("#"+clickagentid).click(function(){
-		$("."+divclassname).slideToggle("slow");
-		});
-		$("#"+closebossid).click(function(){
-			$("."+divclassname).hide("slow");
-		});	
-	}
+
+function dialogbox(clickagentid,divclassname,closebossid){
+	$("#"+clickagentid).click(function(){
+	$("."+divclassname).slideToggle("slow");
+	});
+	$("#"+closebossid).click(function(){
+		$("."+divclassname).hide("slow");
+	});	
+}
+
+function loadpage(page){
+$(".load-temporary").show(500);
+$(".load-temporary").html("<center><img src='img/ldg.gif' class='mini-loader'/></center>");
+	$.ajax({
+		type	: 'GET',
+		url		: page,
+		success	: function(data) {
+			try {
+				$(".load-temporary").hide(500);
+				$(".load-pages").html(data);
+			} catch (err) {
+				alert(err);
+			}
+		}
+	});
+}
+
 	
-	// Dialog Box for subject category
-	dialogbox("addnewsub","openCategory","closeSub");
-	// Dialog Box for user profile
-	dialogbox("showprof","profiler","closeProfile");
-});

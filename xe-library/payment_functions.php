@@ -1,5 +1,38 @@
 <?php
 
+// flutters fees 
+function x_fwfees($amount){
+	if(x_justvalidate($amount) && is_numeric($amount) && ($amount > 0)){
+		$rate = (1.42/100) * $amount;
+		// capping rate at NGN 2000
+		if($rate > 2000){
+			return 2000;
+		}else{
+			return number_format($rate,2);
+		}
+	}else{
+		echo "Invalid amount parsed";
+	}
+}
+// paystack fee function
+function x_pstkfees($amount){
+	if(x_justvalidate($amount) && is_numeric($amount) && ($amount > 0)){
+		if($amount < 2500){
+			$rate = (1.5/100) * $amount;
+		}else{
+			$rate = ((1.5/100) * $amount) + 100;
+		}
+		// capping rate at NGN 2000
+		if($rate > 2000){
+			return 2000;
+		}else{
+			return number_format($rate,2);
+		}
+	}else{
+		echo "Invalid amount parsed";
+	}
+}
+
 // Creating paystack Recipient for Bank accounts
 
 function x_createRecipient($skey,$acctname,$acctnumb,$bankcode,$description){

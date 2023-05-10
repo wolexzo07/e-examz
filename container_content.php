@@ -35,7 +35,7 @@
                     </a>
                 </li><li class="nav-item"><a class="nav-link link text-black display-4" href="https://e-examz.com">
                         How it works</a></li></ul>
-            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary display-4" href="dash/acctmgmt"><span class="mbri-touch-swipe mbr-iconfont mbr-iconfont-btn"></span>
+            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary display-4" href="dash/App-Login"><span class="mbri-touch-swipe mbr-iconfont mbr-iconfont-btn"></span>
                     
                     Login</a></div>
         </div>

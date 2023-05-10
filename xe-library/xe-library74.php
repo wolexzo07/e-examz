@@ -10,12 +10,6 @@ require "mailer/PHPMaile6x/src/Exception.php";
 require "mailer/PHPMaile6x/src/PHPMailer.php";
 require "mailer/PHPMaile6x/src/SMTP.php";
 
-// Agent Library started
-require "ExternalLibr/crawler-detect/src/Fixtures/loader.php";
-require "ExternalLibr/crawler-detect/src/CrawlerDetect.php";
-require "ExternalLibr/mobiledetectlib/Mobile_Detect.php";
-require "ExternalLibr/agent/src/Agent.php";
-
 // Agent Library ended
 
 function x_print($val){
@@ -84,14 +78,14 @@ if (!$mail->send()){
 
 function x_mailer($type,$to,$subject,$message){
 
-if($type == "0"){
-	return sendmail_local($to,$subject,$message);
-}elseif($type == "1"){
-	return sendmail($to,$subject,$message);
-}else{
-	$msg = "Invalid options";
-	return $msg;
-}
+	if($type == "0"){
+		return sendmail_local($to,$subject,$message);
+	}elseif($type == "1"){
+		return sendmail($to,$subject,$message);
+	}else{
+		$msg = "Invalid options";
+		return $msg;
+	}
 
 }
 	
@@ -175,7 +169,7 @@ $par = "/^[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z_+])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a
 $email = $_POST[$chk];
 $r = preg_match($par,$email);
 if(!$r){
-	x_print("Invalid email supplied");
+	x_print("Bad email");
 	exit();
 	}
 return xclean($email);
@@ -273,12 +267,9 @@ function x_sum($what,$table,$where){
 			return $num;
 			}
 	}else{
-		return 0;
+		return "0";
 	}
 }
-
-include("new_db_functions.php");
-
 
 function x_query($what,$table,$where,$limit_opt,$order){
 $limit = x_count($table,$where);
@@ -509,6 +500,7 @@ $arr = explode(",",$colsarr);
 	}
 	x_print("</tr>");
 	}
+	
 function x_content($colsarr){
 		x_print("<tr>");
 $arr = explode(",",$colsarr);
@@ -597,6 +589,12 @@ function x_droptab($db){
 	return $read;
 }
 
+
+function x_curdate(){ // Newly added on 13/01/2023
+		$datetime = new DateTime('now',new DateTimeZone("Africa/Lagos"));
+		$date = $datetime->format("Y-m-d"); 
+		return $date;
+}
 
 function x_curtime($zone,$format){
 	if($format == "0"){
@@ -842,19 +840,20 @@ function xcsize($val,$maxsize){
 
 #xrand($len) to generate random figure like;
 function x_rand_tim($min,$max){
-$range = $max - $min;
-if($range < 1)
-return $min;
-$log = ceil(log($range,2));
-$bytes = (int)($log/8)+1;
-$bits = (int)$log + 1;
-$filter = (int)(1 << $bits) - 1;
-do{
-$rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
-$rnd = $rnd & $filter;
-}while ($rnd > $range);
-return $min + $rnd;
+	$range = $max - $min;
+	if($range < 1)
+	return $min;
+	$log = ceil(log($range,2));
+	$bytes = (int)($log/8)+1;
+	$bits = (int)$log + 1;
+	$filter = (int)(1 << $bits) - 1;
+	do{
+	$rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+	$rnd = $rnd & $filter;
+	}while ($rnd > $range);
+	return $min + $rnd;
 }
+
 function xrands($len){
 $token = "";
 $cac = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -1008,25 +1007,44 @@ function xstart($pick){
 	}
 	
 
-	#include and require
 	function xreq($val){
-		if(empty($val)){
-			x_print("File name cannot be empty!");
-		exit();
+		    if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File required does not exist!");
 			}else{
 				return require_once($val);
 			}
-	
 		}
 		
-		function xinc($val){
-		if(empty($val)){
-			x_print("File name cannot be empty!");
-		exit();
+	function xinc($val){
+			if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File included does not exist!");
 			}else{
 				return include_once($val);
 			}
-	
+		}
+		
+	function x_req($val){
+		if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File required does not exist!");
+			}else{
+				return require($val);
+			}
+		}
+		
+	function x_inc($val){
+		if(empty($val)){	
+				x_print("Error:File name cannot be empty!");
+			}elseif(!file_exists($val)){
+				x_print("Error:File included does not exist!");
+			}else{
+				return include($val);
+			}
 		}
 		
 		function xtitle($val){
@@ -1039,19 +1057,27 @@ function xstart($pick){
 			}
 			
 function x_trunc($str,$start,$stop){
-$len = strlen($str);
-if(!is_numeric($start) || !is_numeric($stop)){
-return "Error:inproper usage of x_trunc(str,start,stop)";
-}else{
+	$len = strlen($str);
+	if(!is_numeric($start) || !is_numeric($stop)){
+		
+	return "Error:inproper usage of x_trunc(str,start,stop)";
+	
+	}else{
 
-if($len > $start){
-return substr($str,$start,$stop)."...";
-}elseif($len < $start){
-return substr($str,$start,$stop);
-}else{
-return $start;
-}
-}
+	if($len > $stop){
+		
+	  return substr($str,$start,$stop)."...";
+	  
+	}elseif(($len < $stop) || ($len == $stop)){
+		
+	  return substr($str,$start,$stop);
+	  
+	}else{
+		
+	 return $start;
+	 
+	}
+  }
 }
 
 function x_vert($str,$wrap){
@@ -1115,7 +1141,7 @@ function xpost($url,$params)
     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
     curl_setopt($ch,CURLOPT_HEADER, false); 
     curl_setopt($ch, CURLOPT_POST, count($params));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);    
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);    
  
     $output=curl_exec($ch);
  
@@ -1491,6 +1517,16 @@ function x_session($value){
 	}
 }
 
+// added on 22/08/2022
+
+function x_seprint($session_variable){
+	if(x_justvalidate($session_variable)){
+		print $_SESSION[$session_variable];
+	}else{
+		print("No variable passed!");
+	}
+}
+
 // newly added on 02/01/2021 started
 
 function x_validatemethod($value){
@@ -1687,12 +1723,127 @@ function x_convert_figure($value){
 	
 }
 
-// Paystack payment functions
-include("payment_functions.php");
-// Include other library
-include("domingos_sp_functions.php");
-// Include the iuosite functions
-include("iuofunction.php");
-include("mobilefunction.php");
+// UPDATE AS AT JULY 7 , 2022
+
+function x_curlPost($url, $data=NULL, $headers = NULL) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    if(!empty($data)){
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    }
+
+    if (!empty($headers)) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    }
+
+    $response = curl_exec($ch);
+
+    if (curl_error($ch)) {
+        trigger_error('Curl Error:' . curl_error($ch));
+    }
+
+    curl_close($ch);
+    return $response;
+}
+
+/***
+curlPost('google.com', [
+    'username' => 'admin',
+    'password' => '12345',
+]);***/
+
+// personal telegram bot details
+	//$id = 1087418627;
+	//$token = "5581262856:AAH-g_y7R01kfXjokBmCxZ0wkhmlBoy4WpE";
+	//$alert_status = 1;
+function x_send_telegram($id , $token ,$mess ,$alert_status){
+    if(x_justvalidate($id) && x_justvalidate($token)){		
+       	$msg = urlencode($mess);
+		$url = "https://api.telegram.org/bot$token/sendmessage?chat_id=$id&text=".$msg;
+		$result = x_curlPost($url, $data=NULL, $headers = NULL);
+		$decode = json_decode($result,true);
+		$finalize = $decode["ok"];
+		$opt = array(0,1);
+		
+		if($finalize == "true"){
+			if(in_array($alert_status,$opt)){
+				if($alert_status == "1"){
+					return "Telegram message sent!";
+				}
+				return true;
+			}else{
+				return "Invalid option";
+			}
+		}
+		
+	}
+}
+
+// send data as json
+
+function x_send_json($postData, $url, $token) {
+        // for sending data as json type
+        $fields = json_encode($postData);
+
+        $ch = curl_init($url);
+        curl_setopt(
+            $ch, 
+            CURLOPT_HTTPHEADER, 
+            array(
+                'Content-Type: application/json', // if the content type is json
+                'bearer: '.$token // if you need token in header
+            )
+        );
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
+    }
+	
+	// Getting ip address fulldetails
+	
+	function x_getipdetails($ip_address){
+		$url = "https://api.iplocation.net/?ip=".$ip_address;
+		if(x_justvalidate($ip_address)){
+			$result = x_curlPost($url, $data=NULL, $headers = NULL);
+			$decode = json_decode($result,true);
+			//var_dump($result);
+			if($decode["response_message"] == "OK"){
+				return $decode["ip"]."-".$decode["country_name"]."-".$decode["isp"]."-".$decode["country_code2"];
+			}else{
+				return "no data";
+			}
+			
+		}
+	}
+	
+	// Update as at 11/24/2022
+	
+	function x_checkdate($realdate){
+		$date_arr  = explode('/', $realdate);
+		if (count($date_arr) == 3) {
+			if (checkdate($date_arr[0], $date_arr[1], $date_arr[2])) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return "Invalid input";
+		}
+	}
+
+
+include("payment_functions.php");// Paystack payment functions
+include("domingos_sp_functions.php");// functions from domingos social
+include("iuofunction.php"); // Include the iuosite functions
+include("mobilefunction.php"); // Mobile Functions
+include("errandpilot_functions.php"); //Errand Pilot functions
+include("testingfunctions.php"); // not stable yet but working
 
 ?>

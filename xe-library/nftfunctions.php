@@ -79,6 +79,7 @@
 		//echo $tranx["BTC"];
 		//echo $tranx["EUR"];
 	}
+	
 	// Manage notification
 	function notifier($type,$title,$message,$userid,$category){
 		$filter = array("p","all","admin");
