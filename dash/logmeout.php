@@ -1,5 +1,5 @@
 <?php
-include_once("../../finishit.php");
+include_once("../finishit.php");
 xstart("0");
 unset($_SESSION["IQGAMES_ID_2018_VISION"]);
 unset($_SESSION["IQGAMES_DEPT_2018_VISION"]);
